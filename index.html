@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyWay | Flight Booking</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f4fa 0%, #d9e2f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* Main card */
+        .booking-card {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            box-shadow: 0 30px 50px -15px rgba(0, 20, 40, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            padding: 2rem 2.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(0, 40, 80, 0.08);
+        }
+
+        .logo-icon {
+            background: #1a2e4b;
+            color: white;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 1.6rem;
+            box-shadow: 0 8px 16px -4px rgba(0, 40, 80, 0.2);
+        }
+
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #0b1e33;
+        }
+
+        .logo-text span {
+            color: #2a6df4;
+            font-weight: 800;
+        }
+
+        .badge {
+            margin-left: auto;
+            background: #e7edf8;
+            color: #1a2e4b;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(42, 109, 244, 0.15);
+        }
+
+        /* Main layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 0;
+        }
+
+        /* Left side – form */
+        .booking-form {
+            padding: 2rem 2.5rem 2.5rem;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0b1e33;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-sub {
+            color: #5f6f84;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-sub i {
+            color: #2a6df4;
+        }
+
+        .input-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #3b4e66;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1.5px solid #e2e9f2;
+            border-radius: 16px;
+            padding: 0.1rem 0.1rem 0.1rem 1rem;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #2a6df4;
+            box-shadow: 0 0 0 3px rgba(42, 109, 244, 0.1);
+        }
+
+        .input-wrapper i {
+            color: #7a8b9f;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .input-wrapper select,
+        .input-wrapper input {
+            flex: 1;
+            border: none;
+            padding: 0.9rem 1rem 0.9rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0b1e33;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        /* custom select arrow */
+        .select-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .select-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.7rem;
+            color: #7a8b9f;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .select-wrapper select {
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Class selector – custom radio pills */
+        .class-options {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.2rem;
+        }
+
+        .class-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .class-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .class-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: white;
+            border: 1.5px solid #e2e9f2;
+            border-radius: 60px;
+            padding: 0.7rem 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #3b4e66;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-bottom: 0;
+        }
+
+        .class-option input[type="radio"]:checked + label {
+            background: #2a6df4;
+            border-color: #2a6df4;
+            color: white;
+            box-shadow: 0 8px 16px -6px #2a6df4;
+        }
+
+        .class-option label i {
+            font-size: 0.9rem;
+            color: inherit;
+        }
+
+        /* Price summary (left bottom) */
+        .price-preview {
+            margin-top: 2rem;
+            background: linear-gradient(105deg, #f6f9ff, #ffffff);
+            border-radius: 20px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #e9f0fa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 14px rgba(0, 20, 40, 0.04);
+        }
+
+        .price-preview span:first-child {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4b5e74;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .price-preview .amount {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #0b1e33;
+            letter-spacing: -0.02em;
+        }
+
+        .price-preview .amount small {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6a7e96;
+        }
+
+        /* Right side – payment & confirmation */
+        .payment-panel {
+            background: #ffffff;
+            padding: 2rem 2.5rem 2.5rem;
+            border-left: 1px solid rgba(0, 40, 80, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.6rem;
+        }
+
+        .payment-header i {
+            background: #eef3fe;
+            color: #2a6df4;
+            padding: 0.6rem;
+            border-radius: 14px;
+            font-size: 1.2rem;
+        }
+
+        .payment-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0b1e33;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .method {
+            flex: 1;
+            border: 1.5px solid #e2e9f2;
+            border-radius: 14px;
+            padding: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #3b4e66;
+            background: white;
+            cursor: default;
+            transition: 0.2s;
+        }
+
+        .method.active {
+            border-color: #2a6df4;
+            background: #f5f9ff;
+            color: #1a2e4b;
+        }
+
+        .method i {
+            font-size: 1.2rem;
+        }
+
+        .card-form .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .card-form .input-wrapper {
+            background: #f9fbfe;
+        }
+
+        .card-form .input-wrapper input {
+            background: transparent;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .card-form .row-2 {
+            gap: 0.8rem;
+        }
+
+        /* Confirm button */
+        .confirm-btn {
+            background: #0b1e33;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 1.1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            margin-top: 1.8rem;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 16px 30px -12px rgba(11, 30, 51, 0.4);
+            letter-spacing: -0.2px;
+        }
+
+        .confirm-btn i {
+            font-size: 1.2rem;
+        }
+
+        .confirm-btn:hover {
+            background: #1a2e4b;
+            transform: scale(1.01);
+            box-shadow: 0 20px 35px -12px #0b1e33;
+        }
+
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* success message */
+        .success-message {
+            background: #e3f2e9;
+            color: #1e7b4c;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1.2rem;
+            border: 1px solid #b7e0c6;
+            font-size: 0.95rem;
+        }
+
+        .success-message i {
+            font-size: 1.3rem;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .payment-panel {
+                border-left: none;
+                border-top: 1px solid rgba(0, 40, 80, 0.06);
+            }
+            .booking-card {
+                border-radius: 2rem;
+            }
+            .header {
+                padding: 1.5rem;
+            }
+            .booking-form,
+            .payment-panel {
+                padding: 1.75rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .row-2 {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .class-options {
+                flex-direction: column;
+            }
+            .price-preview {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .badge {
+                display: none;
+            }
+            .header {
+                justify-content: center;
+            }
+        }
+
+        /* small extras */
+        .hint {
+            font-size: 0.72rem;
+            color: #7a8b9f;
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="booking-card">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-icon">
+            <i class="fas fa-plane-departure"></i>
+        </div>
+        <div class="logo-text">Sky<span>Way</span></div>
+        <div class="badge">
+            <i class="fas fa-shield-alt"></i> Secure booking
+        </div>
+    </div>
+
+    <!-- Main two-column layout -->
+    <div class="main-grid">
+        <!-- LEFT: flight selection -->
+        <div class="booking-form">
+            <div class="form-title">Book your flight</div>
+            <div class="form-sub">
+                <i class="fas fa-map-pin"></i> Choose destination, date & class
+            </div>
+
+            <!-- Destination -->
+            <div class="input-group">
+                <label for="destination"><i class="fas fa-location-dot" style="margin-right: 6px;"></i> Destination</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-globe"></i>
+                    <div class="select-wrapper">
+                        <select id="destination">
+                            <option value="Paris (CDG)">Paris, France (CDG)</option>
+                            <option value="London (LHR)">London, UK (LHR)</option>
+                            <option value="New York (JFK)">New York, USA (JFK)</option>
+                            <option value="Tokyo (HND)">Tokyo, Japan (HND)</option>
+                            <option value="Dubai (DXB)">Dubai, UAE (DXB)</option>
+                            <option value="Singapore (SIN)">Singapore (SIN)</option>
+                            <option value="Sydney (SYD)">Sydney, Australia (SYD)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date and Time row -->
+            <div class="row-2">
+                <div class="input-group">
+                    <label for="flightDate"><i class="far fa-calendar-alt" style="margin-right: 6px;"></i> Date</label>
+                    <div class="input-wrapper">
+                        <i class="far fa-calendar"></i>
+                        <input type="date" id="flightDate" value="2026-11-15">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="flightTime"><i class="far fa-clock" style="margin-right: 6px;"></i> Time</label>
+                    <div class="input-wrapper">
+                        <i class="far fa-clock"></i>
+                        <input type="time" id="flightTime" value="09:30">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class selection -->
+            <div class="input-group">
+                <label><i class="fas fa-crown" style="margin-right: 6px;"></i> Cabin class</label>
+                <div class="class-options">
+                    <div class="class-option">
+                        <input type="radio" name="class" id="economy" value="Economy" checked>
+                        <label for="economy"><i class="fas fa-chair"></i> Economy</label>
+                    </div>
+                    <div class="class-option">
+                        <input type="radio" name="class" id="business" value="Business">
+                        <label for="business"><i class="fas fa-briefcase"></i> Business</label>
+                    </div>
+                    <div class="class-option">
+                        <input type="radio" name="class" id="first" value="First">
+                        <label for="first"><i class="fas fa-star"></i> First</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price preview -->
+            <div class="price-preview" id="pricePreview">
+                <span><i class="fas fa-tag"></i> Estimated total</span>
+                <div class="amount" id="priceAmount">$ 340 <small>USD</small></div>
+            </div>
+            <div class="hint">
+                <i class="fas fa-info-circle"></i> Price includes taxes & fees
+            </div>
+        </div>
+
+        <!-- RIGHT: payment & confirm -->
+        <div class="payment-panel">
+            <div class="payment-header">
+                <i class="fas fa-credit-card"></i>
+                <h3>Payment details</h3>
+            </div>
+
+            <!-- payment methods (static for UI) -->
+            <div class="payment-methods">
+                <div class="method active">
+                    <i class="fab fa-cc-visa"></i> Visa
+                </div>
+                <div class="method">
+                    <i class="fab fa-cc-mastercard"></i> Master
+                </div>
+                <div class="method">
+                    <i class="fab fa-cc-paypal"></i> PayPal
+                </div>
+            </div>
+
+            <!-- Card form (simulated) -->
+            <div class="card-form">
+                <div class="input-group">
+                    <label>Card number</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-credit-card"></i>
+                        <input type="text" placeholder="4242 4242 4242 4242" value="4242 4242 4242 4242">
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="input-group">
+                        <label>Expiry</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="text" placeholder="MM/YY" value="12/28">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>CVC</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="text" placeholder="123" value="123">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Name on card</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="John Doe" value="John Doe">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm booking button -->
+            <button class="confirm-btn" id="confirmBtn">
+                <i class="fas fa-check-circle"></i> Confirm & Pay
+            </button>
+
+            <!-- success message -->
+            <div class="success-message" id="successMsg">
+                <i class="fas fa-check-circle"></i> Booking confirmed! Your flight is booked.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---- Price data per class (base price in USD) ----
+        const basePrices = {
+            Economy: 340,
+            Business: 890,
+            First: 1450
+        };
+
+        // DOM elements
+        const classRadios = document.querySelectorAll('input[name="class"]');
+        const priceAmount = document.getElementById('priceAmount');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const successMsg = document.getElementById('successMsg');
+        const destinationSelect = document.getElementById('destination');
+        const flightDate = document.getElementById('flightDate');
+        const flightTime = document.getElementById('flightTime');
+
+        // Format currency
+        function formatPrice(amount) {
+            return `$ ${amount} <small>USD</small>`;
+        }
+
+        // Update price display based on selected class
+        function updatePrice() {
+            const selectedClass = document.querySelector('input[name="class"]:checked').value;
+            let base = basePrices[selectedClass] || 340;
+
+            // Optional: add destination multiplier to make it more dynamic (just for visual)
+            const dest = destinationSelect.value;
+            // small destination adjustments (to make it feel real)
+            const multipliers = {
+                'Paris (CDG)': 1.1,
+                'London (LHR)': 1.05,
+                'New York (JFK)': 1.0,
+                'Tokyo (HND)': 1.25,
+                'Dubai (DXB)': 0.95,
+                'Singapore (SIN)': 1.15,
+                'Sydney (SYD)': 1.3
+            };
+            const mult = multipliers[dest] || 1.0;
+            const total = Math.round(base * mult);
+            priceAmount.innerHTML = formatPrice(total);
+        }
+
+        // Reset success message when user changes any form input (so they can rebook)
+        function resetSuccess() {
+            successMsg.classList.remove('show');
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm & Pay';
+        }
+
+        // Listen for class change
+        classRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updatePrice();
+                resetSuccess();
+            });
+        });
+
+        // Listen for destination change
+        destinationSelect.addEventListener('change', function() {
+            updatePrice();
+            resetSuccess();
+        });
+
+        // Listen for date/time changes (just to reset success)
+        flightDate.addEventListener('change', resetSuccess);
+        flightTime.addEventListener('change', resetSuccess);
+
+        // Card input fields (reset success on edit)
+        const cardInputs = document.querySelectorAll('.card-form input');
+        cardInputs.forEach(input => {
+            input.addEventListener('input', resetSuccess);
+        });
+
+        // --- Confirm booking ---
+        confirmBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Simple validation (simulate)
+            const cardNumber = document.querySelector('.card-form input[placeholder="4242 4242 4242 4242"]');
+            const cardName = document.querySelector('.card-form input[placeholder="John Doe"]');
+
+            if (!cardNumber.value.trim() || !cardName.value.trim()) {
+                alert('Please fill in the payment details.');
+                return;
+            }
+
+            // Show processing state
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            // Simulate payment processing (1.2s)
+            setTimeout(() => {
+                // hide button? no, show success and keep disabled
+                successMsg.classList.add('show');
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Booking confirmed';
+                // Optional: scroll to success message
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                // keep button disabled after confirmation
+                // but we also want to allow re-booking if they change something.
+                // we'll re-enable when they change any field via resetSuccess().
+                // but ensure that the button stays disabled until they modify something
+                // we also override the reset to reenable
+                // Store a flag
+                // Actually resetSuccess will set disabled = false and innerHTML back.
+                // That's fine.
+            }, 1200);
+        });
+
+        // --- initial price update ---
+        updatePrice();
+
+        // also ensure that if user changes class or dest after success, button re-enables (handled by resetSuccess on each change)
+        // But we also need to reset if they change time/date
+        // already added.
+
+        // Additional: when clicking on the card inputs, etc. reset success (just in case)
+        // already done.
+
+        // Also for destination change and class change we call resetSuccess.
+        // but we also need to reset the button text if they change after success
+        // Actually resetSuccess does exactly that.
+
+        // one more: the success message is hidden if we call resetSuccess.
+        // but what if we want to keep it? no, we want to hide on new modifications.
+
+        // Edge case: user clicks confirm again after success? button is disabled, so no.
+        // but resetSuccess sets disabled = false.
+
+        // Also we need to make sure that when success is visible and we change something,
+        // we call resetSuccess -> hide message and re-enable button.
+        // already.
+
+        // But we also need to ensure that the success message doesn't show up again if they click confirm again without changing.
+        // If they click confirm, we disable button and show success. They cannot click again.
+        // fine.
+
+        // Add a small guard: on page load, reset state (success hidden)
+        // already.
+
+        // one more thing: the placeholder for card inputs might be different; we used placeholder values
+        // but we can also use id's or just rely on the first two inputs.
+        // It's fine.
+
+        // also time input change handler
+        // Note: resetSuccess also resets button text and disabled.
+
+        // In resetSuccess, we also need to hide success message
+        // done.
+
+        // But the confirmBtn may have been disabled and innerHTML changed, resetSuccess sets it back.
+        // Yes.
+
+        // minor fix: resetSuccess is called on class change, dest change, etc.
+        // But it's also called on card input; that's fine.
+
+        // Also for the radio buttons we listen to change; updatePrice + resetSuccess.
+        // Good.
+
+        // Let's also handle the "payment method" clicks? not needed for functionality, just UI.
+        // but we can make them switch active class (optional)
+        const methods = document.querySelectorAll('.method');
+        methods.forEach(m => {
+            m.addEventListener('click', function() {
+                methods.forEach(mm => mm.classList.remove('active'));
+                this.classList.add('active');
+                // we don't need to reset success for method change, but could
+                resetSuccess();
+            });
+        });
+
+        // also reset success when destination changes (already)
+        // fine.
+
+        // Ensure date and time input values are set if empty
+        if (!flightDate.value) {
+            const today = new Date().toISOString().split('T')[0];
+            flightDate.value = today;
+        }
+        if (!flightTime.value) {
+            flightTime.value = '10:00';
+        }
+    })();
+</script>
+
+</body>
+</html>
